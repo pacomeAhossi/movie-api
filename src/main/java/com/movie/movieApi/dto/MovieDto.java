@@ -1,20 +1,20 @@
 package com.movie.movieApi.dto;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MovieDto {
+
+    private Long id;
 
     @Column(nullable = false, length = 200)
     @NotBlank(message = "Veuillez indiquer le titre du film")
@@ -28,10 +28,25 @@ public class MovieDto {
 
     private Set<String> movieCast;
 
-    private String releaseYear;
+    private Integer releaseYear;
 
     @NotBlank(message = "Veuillez fournir l'image du film")
     private String imageName;
 
     private String imageUrl;
+
+    private Date createdAt;
+
+    private Date updatedAt;
+
+
+    public MovieDto(Long id, String title, String director, String studio, Set<String> movieCast, Integer releaseYear, String imageName, String imageUrl) {
+        this.title = title;
+        this.director = director;
+        this.studio = studio;
+        this.movieCast = movieCast;
+        this.releaseYear = releaseYear;
+        this.imageName = imageName;
+        this.imageUrl = imageUrl;
+    }
 }

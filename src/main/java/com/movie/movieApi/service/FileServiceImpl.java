@@ -51,7 +51,7 @@ public class FileServiceImpl implements FileService{
         String fileName = imageFile.getOriginalFilename();
 
         // Sauvegarde de l'image
-        Files.copy(imageFile.getInputStream(), filePath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(imageFile.getInputStream(), filePath.resolve(fileName));
 
         return fileName;
     }
@@ -65,5 +65,11 @@ public class FileServiceImpl implements FileService{
     // Méthode pour obtenir le chemin complet d'une image
     public String getImagePath(String imageName) {
         return filePath.resolve(imageName).toString();
+    }
+
+    @Override
+    public void deleteImage(String imageName) throws IOException {
+        Path imagePath = filePath.resolve(imageName);
+        Files.deleteIfExists(imagePath);
     }
 }

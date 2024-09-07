@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.Set;
 
 @Data
@@ -35,10 +36,34 @@ public class Movie {
     private Set<String> movieCast;
 
     @Column(nullable = false)
-    private String releaseYear;
+    private Integer releaseYear;
 
     @Column(nullable = false)
     @NotBlank(message = "Veuillez fournir l'image du film")
     private String imageName;
+
+    @Column(nullable = false, updatable = false)
+    private Date createdAt;
+
+    private Date updatedAt;
+
+    @PrePersist
+    protected void onCreate(){
+        createdAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate(){
+        updatedAt = new Date();
+    }
+
+    public Movie(String title, String director, String studio, Set<String> movieCast, Integer releaseYear, String imageName) {
+        this.title = title;
+        this.director = director;
+        this.studio = studio;
+        this.movieCast = movieCast;
+        this.releaseYear = releaseYear;
+        this.imageName = imageName;
+    }
 
 }

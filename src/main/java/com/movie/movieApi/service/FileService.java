@@ -12,4 +12,6 @@ public interface FileService {
     String uploadFile(MultipartFile imageFile) throws IOException;
 
     InputStream getResourceFile(String imageName) throws FileNotFoundException;
+
+    public void deleteImage(String imageName) throws IOException;
 }
