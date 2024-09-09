@@ -1,6 +1,7 @@
 package com.movie.movieApi.service;
 
 import com.movie.movieApi.dto.MovieDto;
+import com.movie.movieApi.dto.MoviePageResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -9,15 +10,17 @@ import java.util.Optional;
 
 public interface MovieService {
 
-    public List<MovieDto> getAllMovies();
+    List<MovieDto> getAllMovies();
 
-    public MovieDto getDetailsMovie(Long id);
+    MovieDto getDetailsMovie(Long id);
 
-    public Boolean deleteMovie(Long id) throws IOException;
+    Boolean deleteMovie(Long id) throws IOException;
 
-    public MovieDto createMovie(MovieDto movieDto, MultipartFile file) throws IOException;
+    MovieDto createMovie(MovieDto movieDto, MultipartFile file) throws IOException;
 
-    public MovieDto updateMovie(Long id, MovieDto movieDto, MultipartFile file) throws IOException;
+    MovieDto updateMovie(Long id, MovieDto movieDto, MultipartFile file) throws IOException;
 
+    MoviePageResponse getAllMoviesWithPagination(Integer pageNumber, Integer pageSize);
 
+    MoviePageResponse getAllMoviesWithPaginationAndSorting(Integer pageNumber, Integer pageSize, String sortBy, String direction);
 }

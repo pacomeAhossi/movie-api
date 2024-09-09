@@ -3,8 +3,10 @@ package com.movie.movieApi.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.movie.movieApi.dto.MovieDto;
+import com.movie.movieApi.dto.MoviePageResponse;
 import com.movie.movieApi.exceptions.EmptyFileException;
 import com.movie.movieApi.service.MovieService;
+import com.movie.movieApi.utils.AppConstants;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -107,5 +109,25 @@ public class MovieController {
             @ModelAttribute MovieDto movieDto) throws IOException {
 
         return ResponseEntity.ok(movieService.updateMovie(id, movieDto, file));
+    }
+
+
+    @GetMapping("/all-movies-pagination")
+    public ResponseEntity<MoviePageResponse> gatAllMoviesWithPagination(
+            @RequestParam(defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize
+    ){
+        return ResponseEntity.ok(movieService.getAllMoviesWithPagination(pageNumber, pageSize));
+    }
+
+
+    @GetMapping("/all-movies-paginationAndSorting")
+    public ResponseEntity<MoviePageResponse> gatAllMoviesWithPaginationAndSorting(
+            @RequestParam(defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(defaultValue = AppConstants.SORT_BY) String sortBy,
+            @RequestParam(defaultValue = AppConstants.SORT_DIR) String direction
+    ){
+        return ResponseEntity.ok(movieService.getAllMoviesWithPaginationAndSorting(pageNumber, pageSize, sortBy, direction));
     }
 }

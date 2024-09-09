@@ -1,6 +1,7 @@
 package com.movie.movieApi.service;
 
 import com.movie.movieApi.dto.MovieDto;
+import com.movie.movieApi.dto.MoviePageResponse;
 import com.movie.movieApi.exceptions.FileExistsException;
 import com.movie.movieApi.exceptions.MovieNotFoundException;
 import com.movie.movieApi.model.Movie;
@@ -10,6 +11,10 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -233,5 +238,74 @@ public class MovieServiceImpl implements MovieService{
         );
 
         return movieDtoToReturn;
+    }
+
+    @Override
+    public MoviePageResponse getAllMoviesWithPagination(Integer pageNumber, Integer pageSize) {
+        // Interface Pageable pour envoyer la requête
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        // Récupération de la liste pageable avec movieRepository
+        Page<Movie> moviePages = movieRepository.findAll(pageable);
+        // Récupération de la liste des movies
+        List<Movie> movies = moviePages.getContent();
+
+        List<MovieDto> movieDtos = new ArrayList<>();
+        // Utérer sur la liste, générer un imageUrl pour chaque objet movie
+        // et le mapper à l'objet MovieDto pour la réponse
+        for (Movie movie: movies){
+            String imageUrl = baseUrl + "/file/" + movie.getImageName();
+            MovieDto movieDto = new MovieDto(
+                    movie.getId(),
+                    movie.getTitle(),
+                    movie.getDirector(),
+                    movie.getStudio(),
+                    movie.getMovieCast(),
+                    movie.getReleaseYear(),
+                    movie.getImageName(),
+                    imageUrl,
+                    movie.getCreatedAt(),
+                    movie.getUpdatedAt()
+            );
+            movieDtos.add(movieDto);
+        }
+        return new MoviePageResponse(
+                movieDtos, pageNumber, pageSize, moviePages.getTotalElements(),
+                moviePages.getTotalPages(), moviePages.isLast());
+    }
+
+    @Override
+    public MoviePageResponse getAllMoviesWithPaginationAndSorting(Integer pageNumber, Integer pageSize, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() :
+                                                                    Sort.by(sortBy).descending();
+
+        // Interface Pageable pour envoyer la requête
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        // Récupération de la liste pageable avec movieRepository
+        Page<Movie> moviePages = movieRepository.findAll(pageable);
+        // Récupération de la liste des movies
+        List<Movie> movies = moviePages.getContent();
+
+        List<MovieDto> movieDtos = new ArrayList<>();
+        // Utérer sur la liste, générer un imageUrl pour chaque objet movie
+        // et le mapper à l'objet MovieDto pour la réponse
+        for (Movie movie: movies){
+            String imageUrl = baseUrl + "/file/" + movie.getImageName();
+            MovieDto movieDto = new MovieDto(
+                    movie.getId(),
+                    movie.getTitle(),
+                    movie.getDirector(),
+                    movie.getStudio(),
+                    movie.getMovieCast(),
+                    movie.getReleaseYear(),
+                    movie.getImageName(),
+                    imageUrl,
+                    movie.getCreatedAt(),
+                    movie.getUpdatedAt()
+            );
+            movieDtos.add(movieDto);
+        }
+        return new MoviePageResponse(
+                movieDtos, pageNumber, pageSize, moviePages.getTotalElements(),
+                moviePages.getTotalPages(), moviePages.isLast());
     }
 }
