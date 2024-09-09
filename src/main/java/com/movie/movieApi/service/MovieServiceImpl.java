@@ -1,6 +1,8 @@
 package com.movie.movieApi.service;
 
 import com.movie.movieApi.dto.MovieDto;
+import com.movie.movieApi.exceptions.FileExistsException;
+import com.movie.movieApi.exceptions.MovieNotFoundException;
 import com.movie.movieApi.model.Movie;
 import com.movie.movieApi.repository.MovieRepository;
 import lombok.Builder;
@@ -73,7 +75,7 @@ public class MovieServiceImpl implements MovieService{
     public MovieDto getDetailsMovie(Long id) {
         // Vérification de l'id du movie dans la base de données
         Movie movie = movieRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Movie not found with id " + id) );
+                .orElseThrow(() -> new MovieNotFoundException("Movie not found with id " + id) );
 
         // Générer l'url de l'image pour la propriété imageUrl de l'objet movieDto
         String imageUrl = baseUrl + "/file/" + movie.getImageName();
@@ -119,7 +121,7 @@ public class MovieServiceImpl implements MovieService{
         // Vérification si l'image existe
         filePath = Paths.get(imageDirectory);
         if (Files.exists(filePath.resolve(Objects.requireNonNull(file.getOriginalFilename())))){
-            throw new RuntimeException("Le fichier existe déjà, veuillez fournir un nouveau");
+            throw new FileExistsException("Le fichier existe déjà, veuillez fournir un nouveau!");
         }
         String uploadedFileName = fileService.uploadFile(file);
 
@@ -164,7 +166,7 @@ public class MovieServiceImpl implements MovieService{
     public MovieDto updateMovie(Long id, MovieDto movieDto, MultipartFile file) throws IOException {
         // On vérifie si l'objet movie existe dans la DB
         Movie existingMovie = movieRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Movie not found with id " + id) );
+                .orElseThrow(() -> new MovieNotFoundException("Movie not found with id " + id) );
 
         // Si le paramètre file est null, l'image n'est pas fourni donc on ne fait rien
         // Si file n'est pas null, on supprime l'ancienne image associé au movie

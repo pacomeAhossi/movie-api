@@ -1,7 +1,7 @@
 package com.movie.movieApi.dto;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ public class MovieDto {
 
     private Long id;
 
-    @Column(nullable = false, length = 200)
+    @Column(nullable = false, length = 200, unique = true)
     @NotBlank(message = "Veuillez indiquer le titre du film")
     private String title;
 
@@ -31,7 +31,7 @@ public class MovieDto {
     private Integer releaseYear;
 
     @NotBlank(message = "Veuillez fournir l'image du film")
-    private String imageName;
+    private String imageName = "default.png";
 
     private String imageUrl;
 

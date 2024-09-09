@@ -3,7 +3,9 @@ package com.movie.movieApi.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.movie.movieApi.dto.MovieDto;
+import com.movie.movieApi.exceptions.EmptyFileException;
 import com.movie.movieApi.service.MovieService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,11 +71,17 @@ public class MovieController {
      */
     @PostMapping
     public ResponseEntity<MovieDto> createMovie(
-            @RequestPart String movieDto,
-            @RequestPart MultipartFile file) throws IOException {
+            @Valid @ModelAttribute MovieDto movieDto,
+            @RequestPart MultipartFile file) throws IOException, EmptyFileException {
 
-        MovieDto movieDtoObject = convertToMovieDto(movieDto);
-        return new ResponseEntity<>(movieService.createMovie(movieDtoObject, file), HttpStatus.CREATED);
+        if (file.isEmpty()){
+            throw new EmptyFileException("Fichier non trouvé! Veuillez en fournir un nouveau");
+        }
+        /*MovieDto movieDtoObject = convertToMovieDto(movieDto);
+        return new ResponseEntity<>(movieService.createMovie(movieDtoObject, file), HttpStatus.CREATED);*/
+
+        return new ResponseEntity<>(movieService.createMovie(movieDto, file), HttpStatus.CREATED);
+
     }
 
     private MovieDto convertToMovieDto(String movieDto) throws JsonProcessingException {
