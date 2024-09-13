@@ -37,11 +37,11 @@ public class AuthFilterService extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
+        // On vérifie si la valeur du paramètre authorization est présente dans le header de la requête
         final String authHeader = request.getHeader("Authorization");
         String jwt;
         String username;
 
-        // On vérifie si la valeur du paramètre authorization est présente dans le header de la requête
         if (authHeader == null || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
             return;
