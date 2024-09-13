@@ -47,6 +47,11 @@ public class GlobalExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    @ExceptionHandler(OtpNotValidException.class)
+    public ProblemDetail handlerOtpNotValidException(OtpNotValidException ex){
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<String> handleExpiredJwtException(ExpiredJwtException ex){
         String errorMessage = "Le token JWt a expiré, veuillez vous reconnecter.";
